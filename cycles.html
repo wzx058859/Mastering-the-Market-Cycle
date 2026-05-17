@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>周期图谱 — 周期</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .rule-block {
+      margin-bottom: 40px;
+    }
+    .rule-block h3 {
+      font-family: var(--font-serif);
+      font-size: 1.25rem;
+      color: var(--text-primary);
+      margin-bottom: 12px;
+      padding-left: 14px;
+      border-left: 3px solid var(--accent);
+    }
+    .pendulum-pairs {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 8px;
+      margin-top: 12px;
+    }
+    .pendulum-pair {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 8px 12px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+    }
+    .pendulum-pair .arrow {
+      color: var(--accent);
+      font-weight: 700;
+    }
+    .dual-timeline {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 32px;
+      margin-top: 32px;
+    }
+    .dual-timeline-col h3 {
+      font-family: var(--font-serif);
+      font-size: 1.125rem;
+      font-weight: 600;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border);
+    }
+    .dual-timeline-col h3 .badge {
+      margin-left: 8px;
+      vertical-align: middle;
+    }
+    @media (max-width: 768px) {
+      .dual-timeline {
+        grid-template-columns: 1fr;
+        gap: 40px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<header class="site-header"></header>
+
+<main class="page-wrapper">
+
+  <section class="hero">
+    <span class="hero-label">CYCLE ATLAS</span>
+    <h1>三类九种<em>周期</em>图谱</h1>
+    <p class="subtitle">经济、企业、市场——三大类周期彼此影响、环环相扣，共同塑造投资世界的潮起潮落。</p>
+  </section>
+
+  <!-- § I — 周期三大规律 -->
+  <section class="section">
+    <div class="section-number">§ I</div>
+    <h2 class="section-title">周期的三大规律</h2>
+    <p class="section-desc">霍华德·马克斯在数十年投资实践中提炼出三条贯穿一切周期的底层规律，理解它们是认识周期、利用周期的前提。</p>
+
+    <div class="prose">
+      <div class="rule-block">
+        <h3>不走直线必走曲线</h3>
+        <p>前途是光明的，道路是曲折的。任何事件的发展都不会是一条直线，而是一条起伏的曲线。大涨之后必有大跌，大跌之后必有大涨。股市如海，永远是潮起又潮落。上涨过程积蓄着下跌的能量，下跌过程积蓄着上涨的能量。</p>
+      </div>
+
+      <div class="rule-block">
+        <h3>不会相同只会相似</h3>
+        <p>历史不会重演过去的细节，历史却会重复相似的过程。涨跌的方向会重复历史相似的模式，但涨跌的幅度不会重复历史相似的幅度。</p>
+        <div class="quote">
+          <p>历史不会重演，但会押韵。</p>
+          <cite>—— 马克·吐温</cite>
+        </div>
+      </div>
+
+      <div class="rule-block">
+        <h3>少走中间多走极端</h3>
+        <p>市场周期围绕基本趋势线或者平均线上下波动，市场走到一个极端之后，总会向中心点回归。但市场回归到中心点之后，却并不会停留，而是继续冲向另一个相反的极端。</p>
+        <p>投资人心理像钟摆一样，在贪婪与恐惧之间大幅摆动，很少停留在中心点上。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- § II — 基本面周期 -->
+  <section class="section">
+    <div class="section-number">§ II</div>
+    <h2 class="section-title">第一类：基本面周期</h2>
+    <p class="section-desc">经济的基本面决定了周期的长期趋势。</p>
+
+    <div class="card-grid">
+      <div class="card">
+        <div class="card-icon">📊</div>
+        <h3>经济周期</h3>
+        <p>经济周期取决于GDP，由人口增长和生产率驱动。长期趋势相对稳定，短期却因心理、情绪和决策的叠加而上下波动。</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🏛️</div>
+        <h3>政府调节逆周期</h3>
+        <p>政府通过货币政策（利率调节）和财政政策（税收与支出）来逆周期调节。但官员同样无法准确预测经济走势，政策效果往往滞后。</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🏢</div>
+        <h3>企业盈利周期</h3>
+        <p>波动幅度是GDP的两三倍，因为经营杠杆和财务杠杆放大了变化。固定成本占比越高，经营杠杆越大，盈利波动也越剧烈。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- § III — 心理周期 -->
+  <section class="section">
+    <div class="section-number">§ III</div>
+    <h2 class="section-title">第二类：心理周期</h2>
+    <p class="section-desc">这是书中最重要也最精彩的内容。人性的表现就是心理和情绪。</p>
+
+    <div class="card-grid">
+      <div class="card">
+        <div class="card-icon">🎭</div>
+        <h3>投资人心理和情绪钟摆</h3>
+        <p>投资人心理像钟摆一样在两个极端之间大幅摆动，很少停留在中间的理性平衡点上。</p>
+        <div class="pendulum-pairs">
+          <div class="pendulum-pair"><span>贪婪</span><span class="arrow">↔</span><span>恐惧</span></div>
+          <div class="pendulum-pair"><span>乐观</span><span class="arrow">↔</span><span>悲观</span></div>
+          <div class="pendulum-pair"><span>信任</span><span class="arrow">↔</span><span>怀疑</span></div>
+          <div class="pendulum-pair"><span>风险容忍</span><span class="arrow">↔</span><span>风险规避</span></div>
+          <div class="pendulum-pair"><span>急于购买</span><span class="arrow">↔</span><span>恐慌卖出</span></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-icon">⚖️</div>
+        <h3>风险态度周期</h3>
+        <p>风险态度随市场情绪周期性地大起大落。风险规避消失的时候最危险，风险恐慌的时候反而是最佳买点。</p>
+      </div>
+    </div>
+
+    <div class="quote" style="margin-top: 32px;">
+      <p>别人处理自己的事情越不谨慎小心，我们处理自己的事情就越要谨慎小心。</p>
+      <cite>—— 沃伦·巴菲特</cite>
+    </div>
+  </section>
+
+  <!-- § IV — 市场周期 -->
+  <section class="section">
+    <div class="section-number">§ IV</div>
+    <h2 class="section-title">第三类：市场周期</h2>
+    <p class="section-desc">市场周期集所有其他周期于一身，再加上随机性的影响。</p>
+
+    <div class="card-grid">
+      <div class="card">
+        <div class="card-icon">💳</div>
+        <h3>信贷周期</h3>
+        <p>信贷窗口在繁荣期大开，资金涌向低质量借款人；一旦违约浮现，窗口猛然关闭，流动性瞬间枯竭。</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">📉</div>
+        <h3>不良债权周期</h3>
+        <p>繁荣阶段就像在火炉前堆木柴，不良贷款悄然积累，只等一个"点火器"引爆危机。</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🏠</div>
+        <h3>房地产周期</h3>
+        <p>开发周期漫长，从拿地到交付往往数年，供给总是滞后于需求，导致严重的供需错配与价格波动。</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">📈</div>
+        <h3>市场周期（股市）</h3>
+        <p>股市周期是所有周期的集大成者。大牛市与大熊市各有三个阶段，从少数人洞察到全民狂热，再到共识崩塌。</p>
+      </div>
+    </div>
+
+    <div class="dual-timeline">
+      <div class="dual-timeline-col">
+        <h3>大牛市三阶段 <span class="badge badge-green">Bull</span></h3>
+        <div class="timeline">
+          <div class="timeline-item">
+            <h4>第一阶段</h4>
+            <p>少数有远见的人相信基本面会好转。</p>
+          </div>
+          <div class="timeline-item">
+            <h4>第二阶段</h4>
+            <p>大部分投资人意识到好转正在发生。</p>
+          </div>
+          <div class="timeline-item">
+            <h4>第三阶段</h4>
+            <p>所有人都确信一切会永远变好。</p>
+          </div>
+        </div>
+      </div>
+      <div class="dual-timeline-col">
+        <h3>大熊市三阶段 <span class="badge badge-red">Bear</span></h3>
+        <div class="timeline">
+          <div class="timeline-item">
+            <h4>第一阶段</h4>
+            <p>少数深思熟虑的人意识到形势不会一直乐观。</p>
+          </div>
+          <div class="timeline-item">
+            <h4>第二阶段</h4>
+            <p>大部分投资人认识到形势正在恶化。</p>
+          </div>
+          <div class="timeline-item">
+            <h4>第三阶段</h4>
+            <p>所有人都确信一切只会更糟。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- § V — 九大周期的关系 -->
+  <section class="section">
+    <div class="section-number">§ V</div>
+    <h2 class="section-title">九大周期的关系</h2>
+
+    <div class="prose">
+      <p>这些周期自身都会起伏；每个周期都会引发其他周期起伏；每个周期都受到其他周期起伏的影响。基本面加上心理面决定市场面，而市场面反过来影响基本面和心理面。</p>
+    </div>
+
+    <div class="quote">
+      <p>成功本身孕育了失败的种子，失败本身也孕育了成功的种子。</p>
+      <cite>—— 霍华德·马克斯</cite>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer"></footer>
+
+<script src="js/common.js"></script>
+</body>
+</html>

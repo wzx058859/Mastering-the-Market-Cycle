@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>周期温度计 — 给市场量体温</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+</head>
+<body>
+  <header class="site-header"></header>
+
+  <main class="page-wrapper">
+    <div class="hero">
+      <span class="hero-label">CYCLE THERMOMETER</span>
+      <h1>给市场量<em>体温</em></h1>
+      <p class="subtitle">测量市场温度，不是预测未来会发生什么，而是判断现在处于周期的什么位置。数据实时更新。</p>
+    </div>
+
+    <!-- § I 市场关键指标 -->
+    <div class="section">
+      <div class="section-number">§ I</div>
+      <h2 class="section-title">市场关键指标</h2>
+      <p class="section-desc">以下指标数据来自 History of Market 等公开数据源，每个交易日自动更新。</p>
+
+      <div class="metric-row" id="metrics-row">
+        <div class="metric">
+          <div class="metric-label">S&P 500 市盈率</div>
+          <div class="metric-value" id="m-pe">—</div>
+          <div class="metric-change" id="m-pe-note"></div>
+        </div>
+        <div class="metric">
+          <div class="metric-label">VIX 恐慌指数</div>
+          <div class="metric-value" id="m-vix">—</div>
+          <div class="metric-change" id="m-vix-note"></div>
+        </div>
+        <div class="metric">
+          <div class="metric-label">年内最大回撤</div>
+          <div class="metric-value" id="m-dd">—</div>
+          <div class="metric-change" id="m-dd-note"></div>
+        </div>
+        <div class="metric">
+          <div class="metric-label">最近年度收益</div>
+          <div class="metric-value" id="m-ret">—</div>
+          <div class="metric-change" id="m-ret-note"></div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">S&P 500 市盈率走势</div>
+          <div class="panel-subtitle">Trailing P/E · 数据源 History of Market</div>
+        </div>
+        <div class="panel-body">
+          <div class="chart-container" id="chart-pe"><div class="chart-loading">加载数据中</div></div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">VIX 恐慌指数</div>
+          <div class="panel-subtitle">CBOE Volatility Index · 高于 30 通常标志危机定价</div>
+        </div>
+        <div class="panel-body">
+          <div class="chart-container" id="chart-vix"><div class="chart-loading">加载数据中</div></div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">历年收益与年内回撤</div>
+          <div class="panel-subtitle">年度价格回报率 vs 年内最大回撤 · 1928 至今</div>
+        </div>
+        <div class="panel-body">
+          <div class="chart-container" id="chart-returns" style="height:400px"><div class="chart-loading">加载数据中</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- § II 市场评估指南 -->
+    <div class="section">
+      <div class="section-number">§ II</div>
+      <h2 class="section-title">市场评估指南</h2>
+      <p class="section-desc">两种评估方式：「主观评估」由你根据感知手动选择，「数据评估」由真实数据自动计算。</p>
+
+      <div class="tab-group">
+        <button class="tab-btn active" data-tab="manual">主观评估</button>
+        <button class="tab-btn" data-tab="data">数据评估</button>
+      </div>
+
+      <!-- Tab 1: 主观评估 -->
+      <div id="tab-manual">
+        <p class="section-desc" style="margin-bottom:16px">这是霍华德·马克斯在《周期》中提出的评估清单。点击你认为更能描述当前市场状况的一侧。</p>
+        <div class="checklist" id="checklist">
+          <div class="checklist-header">
+            <span>上行周期（⚠️ 危险信号）</span>
+            <span>下行周期（✅ 机会信号）</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab 2: 数据评估 -->
+      <div id="tab-data" style="display:none">
+        <p class="section-desc" style="margin-bottom:16px">每个信号通过分段线性映射转换为 0-100 连续温度分，再按四个类别加权汇总。方法论参考 CNN Fear & Greed Index、DollarLiquidity DLI、Market Crash Monitor 等成熟方案。</p>
+
+        <div id="category-breakdown" style="margin-bottom:24px"></div>
+
+        <div class="panel" style="overflow-x:auto">
+          <table class="data-table" id="data-assess-table">
+            <thead>
+              <tr>
+                <th style="width:22%">信号维度</th>
+                <th style="width:12%">当前数值</th>
+                <th style="width:24%">温度评分</th>
+                <th style="width:8%">权重</th>
+                <th style="width:16%">数据源</th>
+              </tr>
+            </thead>
+            <tbody id="data-assess-body">
+              <tr><td colspan="5" style="text-align:center;padding:24px;color:var(--text-muted)">正在加载数据…</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <details style="margin-top:20px;color:var(--text-secondary);font-size:0.8125rem">
+          <summary style="cursor:pointer;color:var(--accent);font-weight:600;margin-bottom:8px">算法说明</summary>
+          <div class="prose" style="max-width:100%">
+            <p><strong>1. 连续评分</strong>：每个指标通过「分段线性插值」映射为 0-100 温度分（0 = 极冷/机会，100 = 极热/危险），避免简单三态判断丢失程度信息。阈值参考历史统计和学术文献。</p>
+            <p><strong>2. 分层加权</strong>：12 个信号分为 4 个类别，按预测能力差异赋予不同权重——估值信号（30%）是最可靠的长期周期指标（AIAE 对未来 10 年回报的 R² ≈ 0.5），信用与利率（25%）是中期领先指标（收益率曲线倒挂预测了 1970 年以来的每次衰退），情绪与市场行为（25%）是直接可观测的周期特征，宏观流动性（20%）提供货币环境背景。</p>
+            <p><strong>3. 缺失值处理</strong>：若某些 API 加载失败，仅对成功加载的信号重新归一化权重，确保结果稳健。</p>
+            <p><strong>4. 局限性</strong>：阈值基于历史经验和专家判断，不是机器学习优化的结果；不同利率环境下估值的"合理水平"不同；该指标是周期位置的当前状态评估，不是未来回报的预测工具。</p>
+          </div>
+        </details>
+      </div>
+    </div>
+
+    <!-- § III 周期温度 -->
+    <div class="section">
+      <div class="section-number">§ III</div>
+      <h2 class="section-title">周期温度</h2>
+
+      <div class="gauge-container">
+        <div class="gauge-score" id="gauge-score">—</div>
+        <div class="gauge-verdict" id="gauge-verdict">请在上方清单中做出选择</div>
+        <div class="gauge-bar">
+          <div class="gauge-needle" id="gauge-needle" style="left:50%"></div>
+        </div>
+        <div class="gauge-labels">
+          <span>极冷</span>
+          <span>偏冷</span>
+          <span>温和</span>
+          <span>偏热</span>
+          <span>极热</span>
+        </div>
+      </div>
+
+      <div class="prose" style="margin:32px auto 0;text-align:center;max-width:640px">
+        <p>如果大部分指标显示市场处于上行周期的特征，说明市场温度偏高，应当谨慎防守。如果大部分指标显示下行周期特征，说明市场温度偏低，可以考虑积极进攻。</p>
+      </div>
+
+      <div class="quote" style="margin-top:32px">
+        <p>所有这些因素都很重要，但是它们都不需要预测。我们可以做出非常优秀的投资决策，只需要仔细观察现在的情况，并以此为基础去做决策。</p>
+        <cite>—— 霍华德·马克斯《周期》</cite>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer"></footer>
+
+  <script src="js/common.js"></script>
+  <script>
+  const CHECKLIST_DATA = [
+    ['经济繁荣兴旺', '经济低迷疲软'],
+    ['市场前景积极乐观', '市场前景消极悲观'],
+    ['贷款机构急切放贷', '贷款机构谨慎收缩'],
+    ['资本市场宽松', '资本市场紧张'],
+    ['资本供给充裕', '资本供给稀缺'],
+    ['利率水平偏低', '利率水平偏高'],
+    ['信用利差收窄', '信用利差走阔'],
+    ['投资人乐观，急于买入', '投资人悲观，不愿买入'],
+    ['近期业绩强劲', '近期业绩疲弱'],
+    ['资产价格偏高', '资产价格偏低'],
+    ['预期收益偏低', '预期收益偏高'],
+    ['风险水平偏高', '风险水平偏低'],
+    ['流行做法：激进、广撒网', '流行做法：谨慎、精挑细选'],
+  ];
+
+  function buildChecklist() {
+    const el = document.getElementById('checklist');
+    CHECKLIST_DATA.forEach(([left, right], i) => {
+      const row = document.createElement('div');
+      row.className = 'checklist-row';
+      row.innerHTML = `<span data-row="${i}" data-side="left">${left}</span><span data-row="${i}" data-side="right">${right}</span>`;
+      el.appendChild(row);
+    });
+
+    el.addEventListener('click', (e) => {
+      const span = e.target.closest('span[data-row]');
+      if (!span) return;
+      const row = span.dataset.row;
+      const side = span.dataset.side;
+      el.querySelectorAll(`span[data-row="${row}"]`).forEach(s => s.classList.remove('selected'));
+      span.classList.add('selected');
+      updateGauge();
+    });
+  }
+
+  function updateGauge() {
+    const el = document.getElementById('checklist');
+    const total = CHECKLIST_DATA.length;
+    const leftCount = el.querySelectorAll('span[data-side="left"].selected').length;
+    const rightCount = el.querySelectorAll('span[data-side="right"].selected').length;
+    const answered = leftCount + rightCount;
+    if (answered === 0) return;
+
+    const score = Math.round((leftCount / total) * 100);
+    document.getElementById('gauge-score').textContent = score;
+    document.getElementById('gauge-needle').style.left = score + '%';
+
+    const verdict = document.getElementById('gauge-verdict');
+    if (score <= 20)      { verdict.textContent = '极冷 — 极度恐惧，绝佳买入窗口'; verdict.style.color = 'var(--blue)'; }
+    else if (score <= 35) { verdict.textContent = '偏冷 — 恐惧占主导，可考虑买入'; verdict.style.color = 'var(--green)'; }
+    else if (score <= 50) { verdict.textContent = '温和 — 周期中段，保持观望'; verdict.style.color = 'var(--text-primary)'; }
+    else if (score <= 65) { verdict.textContent = '偏热 — 乐观情绪升温，适当谨慎'; verdict.style.color = 'var(--orange)'; }
+    else if (score <= 80) { verdict.textContent = '较热 — 贪婪占主导，应提高警惕'; verdict.style.color = 'var(--orange)'; }
+    else                  { verdict.textContent = '极热 — 极度贪婪，赶紧捂紧钱包'; verdict.style.color = 'var(--red)'; }
+  }
+
+  async function loadCharts() {
+    const [peData, vixData, annualData, ddData] = await Promise.all([
+      fetchJSON('https://historyofmarket.com/api/sp500/forward-pe.json'),
+      fetchJSON('https://historyofmarket.com/api/sp500/vix.json'),
+      fetchJSON('https://historyofmarket.com/api/sp500/annual-returns.json'),
+      fetchJSON('https://historyofmarket.com/api/sp500/intrayear-dd.json'),
+    ]);
+
+    if (peData?.trailing) renderPE(peData);
+    if (vixData?.series) renderVIX(vixData);
+    if (annualData?.series && ddData?.annual) renderReturns(annualData, ddData);
+    updateMetrics(peData, vixData, annualData, ddData);
+  }
+
+  function renderPE(data) {
+    const chart = initChart('chart-pe');
+    if (!chart) return;
+    const series = data.trailing;
+    const opt = baseChartOption();
+    opt.xAxis.data = series.map(d => d.date);
+    opt.xAxis.axisLabel.formatter = v => v.slice(0, 7);
+    opt.yAxis.min = 10;
+    opt.series = [{
+      type: 'line',
+      data: series.map(d => d.value),
+      symbol: 'none',
+      lineStyle: { color: CHART_THEME.accent, width: 1.5 },
+      itemStyle: { color: CHART_THEME.accent },
+      areaStyle: { color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+        { offset: 0, color: 'rgba(212,168,83,0.15)' },
+        { offset: 1, color: 'rgba(212,168,83,0)' },
+      ])},
+      markLine: {
+        silent: true,
+        symbol: 'none',
+        lineStyle: { type: 'dashed', width: 1 },
+        data: [
+          { yAxis: 20, lineStyle: { color: '#4ade80' }, label: { formatter: '均值 ≈20', color: '#4ade80', fontSize: 10 } },
+          { yAxis: 25, lineStyle: { color: '#fb923c' }, label: { formatter: '偏高 >25', color: '#fb923c', fontSize: 10 } },
+        ],
+      },
+    }];
+    chart.setOption(opt);
+    window.addEventListener('resize', () => chart.resize());
+  }
+
+  function renderVIX(data) {
+    const chart = initChart('chart-vix');
+    if (!chart) return;
+    const cutoff = new Date();
+    cutoff.setFullYear(cutoff.getFullYear() - 5);
+    const series = data.series.filter(d => new Date(d.date) >= cutoff);
+    const opt = baseChartOption();
+    opt.xAxis.data = series.map(d => d.date);
+    opt.xAxis.axisLabel.formatter = v => v.slice(0, 7);
+    opt.yAxis.min = 0;
+    opt.visualMap = {
+      show: false,
+      pieces: [
+        { lt: 20, color: '#60a5fa' },
+        { gte: 20, lt: 30, color: '#fb923c' },
+        { gte: 30, color: '#f87171' },
+      ],
+      seriesIndex: 0,
+    };
+    opt.series = [{
+      type: 'line',
+      data: series.map(d => d.value),
+      symbol: 'none',
+      lineStyle: { width: 1.5 },
+      areaStyle: { opacity: 0.15 },
+      markLine: {
+        silent: true,
+        symbol: 'none',
+        lineStyle: { type: 'dashed', width: 1 },
+        data: [
+          { yAxis: 20, lineStyle: { color: '#fb923c' }, label: { formatter: '20', color: '#fb923c', fontSize: 10 } },
+          { yAxis: 30, lineStyle: { color: '#f87171' }, label: { formatter: '30 危机线', color: '#f87171', fontSize: 10 } },
+        ],
+      },
+    }];
+    chart.setOption(opt);
+    window.addEventListener('resize', () => chart.resize());
+  }
+
+  function renderReturns(annualData, ddData) {
+    const chart = initChart('chart-returns');
+    if (!chart) return;
+    const years = annualData.series.slice(-40);
+    const ddMap = {};
+    ddData.annual.forEach(d => ddMap[d.year] = d.dd);
+
+    const opt = baseChartOption();
+    opt.grid.bottom = 40;
+    opt.legend = {
+      data: ['年度收益率', '年内最大回撤'],
+      textStyle: { color: CHART_THEME.textColor, fontSize: 11 },
+      top: 0, right: 0,
+    };
+    opt.xAxis.data = years.map(d => d.year);
+    opt.xAxis.axisLabel.rotate = 45;
+    opt.yAxis = [
+      { type: 'value', axisLine: { show: false }, axisTick: { show: false },
+        splitLine: { lineStyle: { color: CHART_THEME.splitLine } },
+        axisLabel: { fontSize: 11, color: CHART_THEME.textColor, formatter: v => v.toFixed(0) + '%' } },
+      { type: 'value', axisLine: { show: false }, axisTick: { show: false },
+        splitLine: { show: false },
+        axisLabel: { fontSize: 11, color: CHART_THEME.textColor, formatter: v => (v*100).toFixed(0) + '%' } },
+    ];
+    opt.tooltip.formatter = params => {
+      let s = `<strong>${params[0].name}</strong><br>`;
+      params.forEach(p => {
+        const isDD = p.seriesName === '年内最大回撤';
+        const v = isDD ? (p.value * 100).toFixed(1) : Number(p.value).toFixed(1);
+        s += `${p.marker} ${p.seriesName}: ${v}%<br>`;
+      });
+      return s;
+    };
+    opt.series = [
+      {
+        name: '年度收益率',
+        type: 'bar',
+        data: years.map(d => {
+          const v = d.value;
+          return { value: v, itemStyle: { color: v >= 0 ? CHART_THEME.green : CHART_THEME.red } };
+        }),
+        barMaxWidth: 16,
+      },
+      {
+        name: '年内最大回撤',
+        type: 'line',
+        yAxisIndex: 1,
+        data: years.map(d => ddMap[d.year] ?? null),
+        symbol: 'circle',
+        symbolSize: 4,
+        lineStyle: { color: '#a78bfa', width: 1.5 },
+        itemStyle: { color: '#a78bfa' },
+      },
+    ];
+    chart.setOption(opt);
+    window.addEventListener('resize', () => chart.resize());
+  }
+
+  function updateMetrics(peData, vixData, annualData, ddData) {
+    if (peData?.trailing?.length) {
+      const latest = peData.trailing[peData.trailing.length - 1];
+      document.getElementById('m-pe').textContent = formatNum(latest.value, 1);
+      const avg = 20;
+      const diff = latest.value - avg;
+      const el = document.getElementById('m-pe-note');
+      el.textContent = (diff >= 0 ? '高于' : '低于') + `均值 ${Math.abs(diff).toFixed(1)}`;
+      el.className = 'metric-change ' + (diff >= 0 ? 'val-down' : 'val-up');
+    }
+
+    if (vixData?.series?.length) {
+      const latest = vixData.series[vixData.series.length - 1];
+      document.getElementById('m-vix').textContent = formatNum(latest.value, 1);
+      const el = document.getElementById('m-vix-note');
+      if (latest.value >= 30) { el.textContent = '⚠️ 恐慌区域'; el.className = 'metric-change val-down'; }
+      else if (latest.value >= 20) { el.textContent = '偏高'; el.className = 'metric-change val-down'; }
+      else { el.textContent = '正常'; el.className = 'metric-change val-up'; }
+    }
+
+    if (annualData?.series?.length) {
+      const latest = annualData.series[annualData.series.length - 1];
+      document.getElementById('m-ret').textContent = latest.value.toFixed(1) + '%';
+      document.getElementById('m-ret-note').textContent = latest.year + '年' + (latest.ytd ? ' YTD' : '');
+      document.getElementById('m-ret-note').className = 'metric-change ' + valClass(latest.value);
+    }
+
+    if (ddData?.annual?.length) {
+      const latest = ddData.annual[ddData.annual.length - 1];
+      document.getElementById('m-dd').textContent = (latest.dd * 100).toFixed(1) + '%';
+      document.getElementById('m-dd-note').textContent = latest.year + '年';
+      document.getElementById('m-dd-note').className = 'metric-change val-down';
+    }
+  }
+
+  // Tab switching
+  document.querySelectorAll('.tab-group .tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.tab-group .tab-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const target = btn.dataset.tab;
+      document.getElementById('tab-manual').style.display = target === 'manual' ? '' : 'none';
+      document.getElementById('tab-data').style.display = target === 'data' ? '' : 'none';
+      if (target === 'data' && dataScoreOverride != null) {
+        applyGauge(dataScoreOverride);
+      } else if (target === 'manual') {
+        updateGauge();
+      }
+    });
+  });
+
+  // === Improved Data-Driven Assessment ===
+  // Piecewise linear interpolation: maps a raw value to a 0-100 score
+  // breakpoints = [[v0, s0], [v1, s1], ...] sorted by v ascending
+  function piecewiseScore(value, breakpoints) {
+    if (value <= breakpoints[0][0]) return breakpoints[0][1];
+    for (let i = 1; i < breakpoints.length; i++) {
+      if (value <= breakpoints[i][0]) {
+        const [v0, s0] = breakpoints[i - 1];
+        const [v1, s1] = breakpoints[i];
+        return s0 + (value - v0) / (v1 - v0) * (s1 - s0);
+      }
+    }
+    return breakpoints[breakpoints.length - 1][1];
+  }
+
+  function tempColor(score) {
+    if (score <= 25) return 'var(--blue)';
+    if (score <= 42) return 'var(--green)';
+    if (score <= 58) return 'var(--accent)';
+    if (score <= 75) return 'var(--orange)';
+    return 'var(--red)';
+  }
+  function tempLabel(score) {
+    if (score <= 20) return '极冷';
+    if (score <= 35) return '偏冷';
+    if (score <= 50) return '温和';
+    if (score <= 65) return '偏热';
+    if (score <= 80) return '较热';
+    return '极热';
+  }
+
+  const CATEGORIES = [
+    { id: 'valuation', label: '估值信号', weight: 0.30, reason: '最可靠的长期周期指标（AIAE R²≈0.5）' },
+    { id: 'credit',    label: '信用与利率', weight: 0.25, reason: '收益率曲线倒挂预测了1970年以来每次衰退' },
+    { id: 'sentiment', label: '情绪与市场', weight: 0.25, reason: '直接可观测的周期行为特征' },
+    { id: 'macro',     label: '宏观流动性', weight: 0.20, reason: '货币环境是周期的底层驱动力' },
+  ];
+
+  // Each signal: id, label, category, weight (within total), breakpoints, source
+  // breakpoints: [[rawValue, score]] — score 0=cold/opportunity, 100=hot/danger
+  const SIGNAL_CONFIG = [
+    // ── Valuation (30%) ──
+    { id: 'pe', label: '市场估值 (PE)', category: 'valuation', weight: 0.15,
+      breakpoints: [[10, 5], [15, 20], [20, 50], [25, 70], [30, 85], [40, 100]],
+      source: 'S&P 500 Trailing PE', sourceUrl: 'https://historyofmarket.com/#panel-forward-pe' },
+    { id: 'aiae', label: '投资者持股配置 (AIAE)', category: 'valuation', weight: 0.15,
+      breakpoints: [[0.20, 5], [0.25, 10], [0.30, 20], [0.35, 40], [0.40, 55], [0.45, 75], [0.50, 95]],
+      source: 'FRED Z.1 Financial Accounts', sourceUrl: 'https://historyofmarket.com/#panel-aiae' },
+    // ── Credit & Rates (25%) ──
+    { id: 'hy_spread', label: '信用利差 (高收益债)', category: 'credit', weight: 0.08,
+      breakpoints: [[200, 95], [300, 75], [400, 50], [500, 35], [600, 20], [800, 5]],
+      source: 'ICE BofA HY OAS', sourceUrl: 'https://dollarliquidity.com/en/indicators/hy-spread' },
+    { id: 'yieldcurve', label: '收益率曲线 (10Y-2Y)', category: 'credit', weight: 0.08,
+      breakpoints: [[-1, 95], [-0.5, 80], [0, 60], [0.5, 45], [1, 30], [2, 10]],
+      source: 'FRED DGS2/DGS10', sourceUrl: 'https://historyofmarket.com/#panel-fin-rates' },
+    { id: 'rates', label: '利率水平 (10Y国债)', category: 'credit', weight: 0.05,
+      breakpoints: [[1, 85], [2, 70], [3, 50], [4, 38], [5, 25], [6, 15]],
+      source: 'FRED DGS10', sourceUrl: 'https://historyofmarket.com/#panel-fin-rates' },
+    { id: 'real_yield', label: '实际利率 (10Y TIPS)', category: 'credit', weight: 0.04,
+      breakpoints: [[-1.5, 90], [-0.5, 75], [0, 60], [0.5, 50], [1, 40], [1.5, 30], [2, 20], [3, 10]],
+      source: 'FRED TIPS', sourceUrl: 'https://dollarliquidity.com/en/indicators/real-yield-10y' },
+    // ── Sentiment & Market (25%) ──
+    { id: 'vix', label: '恐慌指数 (VIX)', category: 'sentiment', weight: 0.10,
+      breakpoints: [[10, 95], [15, 75], [20, 50], [25, 35], [30, 20], [40, 5]],
+      source: 'CBOE VIX', sourceUrl: 'https://historyofmarket.com/#panel-vix' },
+    { id: 'annual_ret', label: '近期年度收益', category: 'sentiment', weight: 0.08,
+      breakpoints: [[-30, 5], [-15, 15], [0, 30], [10, 50], [20, 70], [30, 85], [40, 95]],
+      source: 'S&P 500 Annual Returns', sourceUrl: 'https://historyofmarket.com/#panel-annual' },
+    { id: 'drawdown', label: '年内最大回撤', category: 'sentiment', weight: 0.07,
+      breakpoints: [[-0.40, 5], [-0.30, 10], [-0.20, 25], [-0.15, 40], [-0.10, 55], [-0.05, 75], [0, 90]],
+      source: 'S&P 500 Intrayear DD', sourceUrl: 'https://historyofmarket.com/#panel-intrayear-dd' },
+    // ── Macro Liquidity (20%) ──
+    { id: 'liquidity', label: '流动性评分 (DLI)', category: 'macro', weight: 0.06,
+      breakpoints: [[-0.8, 5], [-0.4, 20], [0, 40], [0.3, 55], [0.5, 65], [0.7, 80], [1.0, 95]],
+      source: 'DLI Composite', sourceUrl: 'https://dollarliquidity.com/' },
+    { id: 'm2', label: '货币供给 (M2 YoY)', category: 'macro', weight: 0.06,
+      breakpoints: [[-0.02, 5], [0, 15], [0.03, 30], [0.06, 50], [0.10, 70], [0.15, 85], [0.25, 100]],
+      source: 'FRED M2', sourceUrl: 'https://dollarliquidity.com/en/indicators/m2' },
+    { id: 'dollar', label: '美元指数 (DXY)', category: 'macro', weight: 0.04,
+      breakpoints: [[-2, 80], [-1, 65], [0, 50], [1, 35], [2, 20]],
+      source: 'Broad Dollar Index', sourceUrl: 'https://dollarliquidity.com/en/indicators/dollar-index' },
+    { id: 'fed_rate', label: '短期利率 (2Y国债)', category: 'macro', weight: 0.04,
+      breakpoints: [[0, 90], [1, 75], [2, 60], [3, 45], [4, 35], [5, 25], [6, 15]],
+      source: 'FRED DGS2', sourceUrl: 'https://historyofmarket.com/#panel-fin-rates' },
+  ];
+
+  let dataScoreOverride = null;
+
+  async function loadDataAssessment() {
+    const [peData, vixData, ratesData, aiaeData, annualData, ddData,
+           hyData, regimeData, realYieldData, m2Data, dollarData] = await Promise.all([
+      fetchJSON('https://historyofmarket.com/api/sp500/forward-pe.json'),
+      fetchJSON('https://historyofmarket.com/api/sp500/vix.json'),
+      fetchJSON('https://historyofmarket.com/api/fin/rates.json'),
+      fetchJSON('https://historyofmarket.com/api/aiae.json'),
+      fetchJSON('https://historyofmarket.com/api/sp500/annual-returns.json'),
+      fetchJSON('https://historyofmarket.com/api/sp500/intrayear-dd.json'),
+      fetchJSON('https://dollarliquidity.com/api/series/hy-spread?days=30'),
+      fetchJSON('https://dollarliquidity.com/api/regime'),
+      fetchJSON('https://dollarliquidity.com/api/series/real-yield-10y?days=30'),
+      fetchJSON('https://dollarliquidity.com/api/series/m2?days=400'),
+      fetchJSON('https://dollarliquidity.com/api/series/dollar-index?days=30'),
+    ]);
+
+    // Extract raw numeric values for each signal
+    const rawValues = {};
+
+    if (peData?.trailing?.length) {
+      rawValues.pe = { raw: peData.trailing[peData.trailing.length - 1].value,
+        display: formatNum(peData.trailing[peData.trailing.length - 1].value, 1) };
+    }
+    if (vixData?.series?.length) {
+      const v = vixData.series[vixData.series.length - 1].value;
+      rawValues.vix = { raw: v, display: formatNum(v, 1) };
+    }
+    if (ratesData?.latestSpread) {
+      const s = ratesData.latestSpread;
+      rawValues.yieldcurve = { raw: s.spread, display: s.spread.toFixed(2) + '%' };
+      rawValues.rates = { raw: s.dgs10, display: s.dgs10.toFixed(2) + '%' };
+      rawValues.fed_rate = { raw: s.dgs2, display: s.dgs2.toFixed(2) + '%' };
+    }
+    if (aiaeData?.series?.length) {
+      const v = aiaeData.series[aiaeData.series.length - 1].aiae;
+      rawValues.aiae = { raw: v, display: (v * 100).toFixed(1) + '%' };
+    }
+    if (annualData?.series?.length) {
+      const latest = annualData.series[annualData.series.length - 1];
+      rawValues.annual_ret = { raw: latest.value, display: latest.value.toFixed(1) + '%' };
+    }
+    if (ddData?.annual?.length) {
+      const latest = ddData.annual[ddData.annual.length - 1];
+      rawValues.drawdown = { raw: latest.dd, display: (latest.dd * 100).toFixed(1) + '%' };
+    }
+    if (hyData?.data?.length) {
+      const v = hyData.data[0].value;
+      rawValues.hy_spread = { raw: v, display: Math.round(v) + 'bp' };
+    }
+    if (regimeData?.compositeScore != null) {
+      rawValues.liquidity = { raw: regimeData.compositeScore,
+        display: regimeData.compositeScore.toFixed(2) };
+    }
+    if (realYieldData?.data?.length) {
+      rawValues.real_yield = { raw: realYieldData.data[0].value,
+        display: realYieldData.data[0].value.toFixed(2) + '%' };
+    }
+    if (m2Data?.data?.length && m2Data.data.length >= 2) {
+      const sorted = [...m2Data.data].sort((a, b) => a.date.localeCompare(b.date));
+      const latestVal = sorted[sorted.length - 1].value;
+      const latestDate = sorted[sorted.length - 1].date;
+      const cutoff = new Date(latestDate);
+      cutoff.setFullYear(cutoff.getFullYear() - 1);
+      const yearAgo = sorted.find(d => d.date <= cutoff.toISOString().slice(0, 10));
+      if (yearAgo) {
+        const growth = (latestVal - yearAgo.value) / yearAgo.value;
+        rawValues.m2 = { raw: growth, display: (growth * 100).toFixed(1) + '%' };
+      }
+    }
+    if (dollarData?.data?.length) {
+      const d = dollarData.data[0];
+      rawValues.dollar = { raw: d.zScore ?? 0, display: formatNum(d.value, 1) };
+    }
+
+    renderDataTable(rawValues);
+  }
+
+  function renderDataTable(rawValues) {
+    const tbody = document.getElementById('data-assess-body');
+
+    // Score each signal
+    const scored = SIGNAL_CONFIG.map(sig => {
+      const rv = rawValues[sig.id];
+      if (!rv) return { ...sig, value: '—', score: null };
+      const score = Math.round(piecewiseScore(rv.raw, sig.breakpoints));
+      return { ...sig, value: rv.display, rawValue: rv.raw, score: Math.max(0, Math.min(100, score)) };
+    });
+
+    // Category sub-scores (weighted average within each category, renormalized)
+    const catScores = {};
+    CATEGORIES.forEach(cat => {
+      const sigs = scored.filter(s => s.category === cat.id && s.score != null);
+      if (sigs.length === 0) { catScores[cat.id] = null; return; }
+      const totalW = sigs.reduce((s, x) => s + x.weight, 0);
+      catScores[cat.id] = Math.round(sigs.reduce((s, x) => s + x.score * (x.weight / totalW), 0));
+    });
+
+    // Overall weighted score (renormalize over available categories)
+    const availableCats = CATEGORIES.filter(c => catScores[c.id] != null);
+    const totalCatWeight = availableCats.reduce((s, c) => s + c.weight, 0);
+    const overallScore = totalCatWeight > 0
+      ? Math.round(availableCats.reduce((s, c) => s + catScores[c.id] * (c.weight / totalCatWeight), 0))
+      : null;
+
+    // Render category breakdown
+    const catEl = document.getElementById('category-breakdown');
+    catEl.innerHTML = `
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px">
+        ${CATEGORIES.map(cat => {
+          const sc = catScores[cat.id];
+          const col = sc != null ? tempColor(sc) : 'var(--text-dim)';
+          return `<div class="metric" style="padding:14px 16px">
+            <div class="metric-label">${cat.label} · ${(cat.weight*100).toFixed(0)}%</div>
+            <div style="display:flex;align-items:center;gap:10px;margin-top:6px">
+              <div style="flex:1;height:6px;background:var(--bg-elevated);border-radius:3px;overflow:hidden">
+                <div style="width:${sc ?? 0}%;height:100%;background:${col};border-radius:3px;transition:width 0.6s"></div>
+              </div>
+              <span style="font-size:1.125rem;font-weight:700;color:${col};min-width:28px;text-align:right">${sc ?? '—'}</span>
+            </div>
+            <div style="font-size:0.6875rem;color:var(--text-dim);margin-top:4px">${cat.reason}</div>
+          </div>`;
+        }).join('')}
+      </div>
+      ${overallScore != null ? `
+      <div style="margin-top:16px;padding:16px 20px;background:var(--bg-card);border:1px solid var(--border);border-radius:10px;display:flex;align-items:center;gap:16px">
+        <span style="font-size:0.8125rem;color:var(--text-muted);white-space:nowrap">综合温度</span>
+        <div style="flex:1;height:8px;background:var(--bg-elevated);border-radius:4px;overflow:hidden">
+          <div style="width:${overallScore}%;height:100%;border-radius:4px;transition:width 0.6s;background:linear-gradient(90deg,var(--blue),var(--green),var(--accent),var(--orange),var(--red));background-size:${10000/overallScore}% 100%"></div>
+        </div>
+        <span style="font-size:1.5rem;font-weight:700;color:${tempColor(overallScore)}">${overallScore}</span>
+        <span class="badge" style="background:${tempColor(overallScore)}20;color:${tempColor(overallScore)}">${tempLabel(overallScore)}</span>
+      </div>` : ''}
+    `;
+
+    // Render signal table grouped by category
+    let html = '';
+    CATEGORIES.forEach(cat => {
+      const sc = catScores[cat.id];
+      html += `<tr><td colspan="5" style="padding:10px 16px;background:var(--bg-elevated);font-size:0.75rem;font-weight:600;color:var(--text-muted);letter-spacing:0.06em;text-transform:uppercase;border-bottom:1px solid var(--border)">
+        ${cat.label} · ${(cat.weight*100).toFixed(0)}%
+        ${sc != null ? `<span style="float:right;color:${tempColor(sc)}">${sc} ${tempLabel(sc)}</span>` : ''}
+      </td></tr>`;
+      scored.filter(s => s.category === cat.id).forEach(sig => {
+        const sc = sig.score;
+        const col = sc != null ? tempColor(sc) : 'var(--text-dim)';
+        const barHtml = sc != null
+          ? `<div style="display:flex;align-items:center;gap:8px">
+              <div style="width:60px;height:5px;background:var(--bg-elevated);border-radius:3px;overflow:hidden">
+                <div style="width:${sc}%;height:100%;background:${col};border-radius:3px"></div>
+              </div>
+              <span style="font-weight:700;color:${col};font-size:0.9375rem">${sc}</span>
+              <span style="font-size:0.6875rem;color:var(--text-dim)">${tempLabel(sc)}</span>
+            </div>`
+          : '<span style="color:var(--text-dim)">—</span>';
+        html += `<tr>
+          <td><strong>${sig.label}</strong></td>
+          <td style="font-variant-numeric:tabular-nums;font-weight:600">${sig.value}</td>
+          <td>${barHtml}</td>
+          <td style="font-size:0.8125rem;color:var(--text-muted)">${(sig.weight*100).toFixed(0)}%</td>
+          <td style="font-size:0.75rem"><a href="${sig.sourceUrl}" target="_blank" style="color:var(--text-muted);text-decoration:none">${sig.source}</a></td>
+        </tr>`;
+      });
+    });
+    tbody.innerHTML = html;
+
+    if (overallScore != null) {
+      dataScoreOverride = overallScore;
+    }
+  }
+
+  function applyGauge(score) {
+    document.getElementById('gauge-score').textContent = score;
+    document.getElementById('gauge-needle').style.left = score + '%';
+    const verdict = document.getElementById('gauge-verdict');
+    if (score <= 20)      { verdict.textContent = '极冷 — 极度恐惧，绝佳买入窗口'; verdict.style.color = 'var(--blue)'; }
+    else if (score <= 35) { verdict.textContent = '偏冷 — 恐惧占主导，可考虑买入'; verdict.style.color = 'var(--green)'; }
+    else if (score <= 50) { verdict.textContent = '温和 — 周期中段，保持观望'; verdict.style.color = 'var(--text-primary)'; }
+    else if (score <= 65) { verdict.textContent = '偏热 — 乐观情绪升温，适当谨慎'; verdict.style.color = 'var(--orange)'; }
+    else if (score <= 80) { verdict.textContent = '较热 — 贪婪占主导，应提高警惕'; verdict.style.color = 'var(--orange)'; }
+    else                  { verdict.textContent = '极热 — 极度贪婪，赶紧捂紧钱包'; verdict.style.color = 'var(--red)'; }
+  }
+
+  buildChecklist();
+  loadCharts();
+  loadDataAssessment();
+  </script>
+</body>
+</html>

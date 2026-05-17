@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>周期 — 万物皆有周期</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="site-header"></header>
+
+<main class="page-wrapper">
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-label">MASTERING THE MARKET CYCLE</div>
+    <h1>万物皆有<em>周期</em></h1>
+    <p class="subtitle">没有只涨不跌的资产。理解周期、感知周期、顺应周期——这是投资最重要的事。</p>
+    <div class="pendulum-wrap">
+      <div class="pendulum-pivot"></div>
+      <div class="pendulum-arm">
+        <div class="pendulum-bob"></div>
+      </div>
+      <div class="pendulum-labels">
+        <span>恐惧</span>
+        <span>贪婪</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- § I  为什么投资要研究周期 -->
+  <section class="section">
+    <div class="section-number">§ I</div>
+    <h2 class="section-title">为什么投资要研究周期</h2>
+
+    <div class="prose">
+      <p>做投资管理50多年，我认识不少卓越投资人，他们对周期特别有感觉——知道自己身处周期的什么位置，知道市场的钟摆正在朝哪个方向摆动。<strong>这种对周期的感悟，不是来自公式，而是来自长期的观察和深刻的理解。</strong>周期永远不会停止，它是这个世界运转最基本的规律之一。</p>
+    </div>
+
+    <div class="quote">
+      <p>"在别人贪婪时恐惧，在别人恐惧时贪婪。"</p>
+      <cite>— 沃伦·巴菲特</cite>
+    </div>
+
+    <div class="feature-grid">
+      <div class="feature-item">
+        <div class="num">1</div>
+        <div>
+          <h4>周期的含义</h4>
+          <p>前途是光明的，道路是曲折的。市场不走直线必走曲线。</p>
+        </div>
+      </div>
+      <div class="feature-item">
+        <div class="num">2</div>
+        <div>
+          <h4>周期的分类</h4>
+          <p>三大类九小种周期：基本面、心理面、市场面。</p>
+        </div>
+      </div>
+      <div class="feature-item">
+        <div class="num">3</div>
+        <div>
+          <h4>判断周期位置</h4>
+          <p>给市场量体温，用关键指标判断现在处于周期的什么阶段。</p>
+        </div>
+      </div>
+      <div class="feature-item">
+        <div class="num">4</div>
+        <div>
+          <h4>投资策略</h4>
+          <p>有识、有胆、有备——应对周期三步操作。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- § II  周期三大规律 -->
+  <section class="section">
+    <div class="section-number">§ II</div>
+    <h2 class="section-title">周期三大规律</h2>
+
+    <div class="card-grid">
+      <div class="card">
+        <div class="card-icon">〰️</div>
+        <h3>不走直线必走曲线</h3>
+        <p>没有哪一种趋势可以永远持续下去。树不会长到天上去，也很少有东西会归零。周期的波动是自然法则。</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🔄</div>
+        <h3>不会相同只会相似</h3>
+        <p>历史不会重演，但总是惊人的相似。每一轮周期的细节不同，但背后的人性驱动力从未改变。</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">⚡</div>
+        <h3>少走中间多走极端</h3>
+        <p>市场的钟摆很少停在中间位置，它总是从一个极端摆向另一个极端。这正是投资机会之所在。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- § III  市场此刻 -->
+  <section class="section">
+    <div class="section-number">§ III</div>
+    <h2 class="section-title">市场此刻</h2>
+
+    <div class="metric-row">
+      <div class="metric">
+        <div class="metric-label">S&P 500 PE</div>
+        <div class="metric-value" id="metric-pe">—</div>
+        <div class="metric-change" id="metric-pe-note"></div>
+      </div>
+      <div class="metric">
+        <div class="metric-label">VIX 恐慌指数</div>
+        <div class="metric-value" id="metric-vix">—</div>
+        <div class="metric-change" id="metric-vix-note"></div>
+      </div>
+      <div class="metric">
+        <div class="metric-label">最近年化收益</div>
+        <div class="metric-value" id="metric-return">—</div>
+        <div class="metric-change" id="metric-return-note"></div>
+      </div>
+      <div class="metric">
+        <div class="metric-label">当前回撤</div>
+        <div class="metric-value" id="metric-drawdown">—</div>
+        <div class="metric-change" id="metric-drawdown-note"></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-title">S&P 500 市盈率</div>
+      </div>
+      <div class="panel-body">
+        <div class="chart-container" id="chart-sp500-pe">
+          <div class="chart-loading">加载数据中</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-title">VIX 恐慌指数</div>
+      </div>
+      <div class="panel-body">
+        <div class="chart-container" id="chart-vix">
+          <div class="chart-loading">加载数据中</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- § IV  继续探索 -->
+  <section class="section">
+    <div class="section-number">§ IV</div>
+    <h2 class="section-title">继续探索</h2>
+
+    <div class="card-grid">
+      <a class="card" href="cycles.html" style="text-decoration:none;color:inherit;">
+        <div class="card-icon">📊</div>
+        <h3>周期图谱</h3>
+        <p>深入了解三类九种周期——经济周期、信贷周期、情绪周期……逐一拆解它们的运转规律。</p>
+      </a>
+      <a class="card" href="thermometer.html" style="text-decoration:none;color:inherit;">
+        <div class="card-icon">🌡️</div>
+        <h3>周期温度计</h3>
+        <p>用真实数据判断当前周期位置。PE、VIX、信用利差……综合打分，给市场量体温。</p>
+      </a>
+      <a class="card" href="strategy.html" style="text-decoration:none;color:inherit;">
+        <div class="card-icon">🧭</div>
+        <h3>投资策略</h3>
+        <p>如何在不同周期阶段布局——何时进攻、何时防守、何时等待。</p>
+      </a>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer"></footer>
+
+<script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+<script src="js/common.js"></script>
+<script>
+(async function () {
+  const PE_URL = 'https://historyofmarket.com/api/sp500/forward-pe.json';
+  const VIX_URL = 'https://historyofmarket.com/api/sp500/vix.json';
+
+  const [peData, vixData] = await Promise.all([
+    fetchJSON(PE_URL),
+    fetchJSON(VIX_URL),
+  ]);
+
+  if (peData && peData.trailing) {
+    const trailing = peData.trailing;
+    const latest = trailing[trailing.length - 1];
+
+    document.getElementById('metric-pe').textContent = formatNum(latest.value);
+    const peLevel = latest.value > 25 ? '偏高' : latest.value < 15 ? '偏低' : '中性';
+    document.getElementById('metric-pe-note').textContent = '历史均值 ≈ 20 · ' + peLevel;
+
+    const peChart = initChart('chart-sp500-pe');
+    if (peChart) {
+      const opt = baseChartOption();
+      opt.xAxis.data = trailing.map(d => d.date);
+      opt.xAxis.axisLabel.formatter = v => v.slice(0, 7);
+      opt.yAxis.min = 10;
+      opt.series = [{
+        type: 'line',
+        data: trailing.map(d => d.value),
+        showSymbol: false,
+        lineStyle: { width: 1.5, color: CHART_THEME.accent },
+        itemStyle: { color: CHART_THEME.accent },
+        areaStyle: { color: new echarts.graphic.LinearGradient(0,0,0,1,[
+          {offset:0,color:'rgba(212,168,83,0.12)'},{offset:1,color:'rgba(212,168,83,0)'}
+        ])},
+        markLine: {
+          silent: true, symbol: 'none',
+          lineStyle: { type: 'dashed', width: 1 },
+          data: [{ yAxis: 20, lineStyle:{color:'#4ade80'}, label:{formatter:'均值 ≈20',color:'#4ade80',fontSize:10} }],
+        },
+      }];
+      peChart.setOption(opt);
+      window.addEventListener('resize', () => peChart.resize());
+    }
+  }
+
+  if (vixData && vixData.series) {
+    const cutoff = new Date();
+    cutoff.setFullYear(cutoff.getFullYear() - 5);
+    const vix = vixData.series.filter(d => new Date(d.date) >= cutoff);
+
+    if (vix.length) {
+      const latestVix = vix[vix.length - 1].value;
+      document.getElementById('metric-vix').textContent = formatNum(latestVix);
+      const vixLevel = latestVix > 30 ? '恐慌' : latestVix > 20 ? '谨慎' : '平静';
+      const vixColor = latestVix > 30 ? 'val-down' : latestVix > 20 ? 'val-neutral' : 'val-up';
+      const noteEl = document.getElementById('metric-vix-note');
+      noteEl.textContent = vixLevel;
+      noteEl.className = 'metric-change ' + vixColor;
+
+      const vixChart = initChart('chart-vix');
+      if (vixChart) {
+        const opt = baseChartOption();
+        opt.xAxis.data = vix.map(d => d.date);
+        opt.xAxis.axisLabel.formatter = v => v.slice(0, 7);
+        opt.yAxis.min = 0;
+        opt.visualMap = {
+          show: false,
+          pieces: [
+            { lt: 20, color: '#60a5fa' },
+            { gte: 20, lt: 30, color: '#fb923c' },
+            { gte: 30, color: '#f87171' },
+          ],
+          seriesIndex: 0,
+        };
+        opt.series = [{
+          type: 'line',
+          data: vix.map(d => d.value),
+          showSymbol: false,
+          lineStyle: { width: 1.5 },
+          areaStyle: { opacity: 0.15 },
+          markLine: {
+            silent: true, symbol: 'none',
+            lineStyle: { type: 'dashed', width: 1 },
+            data: [
+              { yAxis: 20, lineStyle:{color:'#fb923c'}, label:{formatter:'20',color:'#fb923c',fontSize:10} },
+              { yAxis: 30, lineStyle:{color:'#f87171'}, label:{formatter:'30 危机线',color:'#f87171',fontSize:10} },
+            ],
+          },
+        }];
+        vixChart.setOption(opt);
+        window.addEventListener('resize', () => vixChart.resize());
+      }
+    }
+  }
+
+  try {
+    const returnData = await fetchJSON('https://historyofmarket.com/api/sp500/annual-returns.json');
+    if (returnData && returnData.series) {
+      const latest = returnData.series[returnData.series.length - 1];
+      if (latest?.value != null) {
+        const el = document.getElementById('metric-return');
+        el.textContent = latest.value.toFixed(1) + '%';
+        el.className = 'metric-value ' + valClass(latest.value);
+        document.getElementById('metric-return-note').textContent = latest.year + '年' + (latest.ytd ? ' YTD' : '');
+      }
+    }
+  } catch (_) {}
+})();
+</script>
+
+</body>
+</html>
