@@ -2,6 +2,16 @@
 
 基于霍华德·马克斯《周期》(Mastering the Market Cycle) 的静态网站：理解周期含义、周期分类、数据驱动的市场温度评估，以及对应投资策略。
 
+## 在线访问（GitHub Pages）
+
+站点已部署，首页：<https://wzx058859.github.io/Mastering-the-Market-Cycle/>
+
+- 周期图谱：<https://wzx058859.github.io/Mastering-the-Market-Cycle/cycles.html>
+- 周期温度计：<https://wzx058859.github.io/Mastering-the-Market-Cycle/thermometer.html>
+- 投资策略：<https://wzx058859.github.io/Mastering-the-Market-Cycle/strategy.html>
+
+首次启用后，构建可能需要 1～3 分钟；若 404，请稍等再刷新。仓库：<https://github.com/wzx058859/Mastering-the-Market-Cycle>
+
 ## 页面
 
 | 页面 | 说明 |
